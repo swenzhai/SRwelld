@@ -1,0 +1,7 @@
+LIBRARY SRwelld
+EXPORTS
+srCreateResizeCoef @1
+srResize @2
+srReleaseResizeCoef @3
+srAbout @4
+

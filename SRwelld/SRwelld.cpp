@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "SRwelld.h"
 
-//#include "include\imgproc.hpp"
 #include "include\imgproc_c.h"
 #pragma comment(lib,"lib\\zlib.lib")
 #pragma comment(lib,"lib\\IlmImf.lib")
@@ -12,21 +11,6 @@
 #pragma comment(lib,"lib\\libjasper.lib")
 #pragma comment(lib,"lib\\opencv_core2413.lib")
 #pragma comment(lib,"lib\\opencv_imgproc2413.lib")
-
-// 这是导出变量的一个示例
-//SRWELLD_API int nSRwelld=0;
-// 这是导出函数的一个示例。
-//SRWELLD_API int fnSRwelld(void)
-//{
-//    return 42;
-//}
-// 这是已导出类的构造函数。
-// 有关类定义的信息，请参阅 SRwelld.h
-//CSRwelld::CSRwelld()
-//{
-//    return;
-//}
-//
 
 IplImage *src = 0;
 IplImage *dst = 0;

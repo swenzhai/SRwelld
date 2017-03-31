@@ -76,13 +76,13 @@ SRWELLD_API int __stdcall srCreateResizeCoef(BYTE * pSrc, BITMAPINFO * pBmpInfo,
 	volatile int widthStep = (pBmpInfo->bmiHeader.biWidth * 3 * 4 +3) / 4;//widthStep 4×Ö½Ú¶ÔÆë
 	src_data = pSrc;
 	resizeSrc = (uchar*)malloc((nWidth+3)*nHeight * 3);//guarantee memory enough
-	cvSetData(src, resizeSrc, widthStep);
+	cvSetData(src, resizeSrc, widthStep);//relate the memory pointer to src, avoid memory alloc in src
 
 	//dst prepare
 	CvSize dst_cvsize;
 	dst_cvsize.width = (int)(src->width*scale);
 	dst_cvsize.height = (int)(src->height*scale);
-	dst = cvCreateImage(dst_cvsize, IPL_DEPTH_8U, 3);
+	dst = cvCreateImage(dst_cvsize, IPL_DEPTH_8U, 3);//alloc the memory of ImageInfo and the memory to store Image
 	*pDst = (BYTE*)dst->imageDataOrigin;
 	return 0;
 }

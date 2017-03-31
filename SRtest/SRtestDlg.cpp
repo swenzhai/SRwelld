@@ -171,15 +171,23 @@ void CSRtestDlg::OnBnClickedButton1()
 BYTE pBuf[720 * 512] = {0xff,0,1,2,0xff};
 BITMAPINFO bmpInfo;
 BYTE* pDst;
-double scale = 1.5;
+double scale = 1.3;
+char c[1078];
+BITMAPINFO *pBmpInfoDst;
 void CSRtestDlg::OnBnClickedButton2()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	bmpInfo.bmiHeader.biWidth = 720;
-	bmpInfo.bmiHeader.biHeight = 512;
+	bmpInfo.bmiHeader.biHeight = 440;
 	bmpInfo.bmiHeader.biPlanes = 1;
 	bmpInfo.bmiHeader.biBitCount = 8;
-	srCreateResizeCoef(pBuf, &bmpInfo, &pDst, scale);
+	FILE *fp;
+	fp = fopen("D:\\20.bmp", "rb");
+	fread(c, 1, 1078, fp);
+	fread(pBuf, 1, 720 * 440,fp);
+	fclose(fp);
+	BITMAPINFO *pBInfo = (BITMAPINFO*)(&c[14]);
+	srCreateResizeCoef(pBuf, pBInfo/*(BITMAPINFO*)(char*)(&c[14])*/, &pDst, &pBmpInfoDst, scale);
 }
 
 #include "TimerCounter.h"
@@ -191,12 +199,21 @@ void CSRtestDlg::OnBnClickedButton3()
 	srResize(1);
 	tCount.Stop();
 
-	static int i;
+	static int i=1000;
 	char s[256];
-	sprintf(s,"%d.out",i++);
+	sprintf(s,"%d.bmp",i++);
 	FILE * fp;
 	fp = fopen(s, "wb");
-	fwrite(pDst, 1,720*scale*512*scale,fp);
+	/*BITMAPINFO *pBInfo = (BITMAPINFO *)&c[14];
+	pBInfo->bmiHeader.biHeight = 440 * scale;
+	pBInfo->bmiHeader.biWidth = 720 * scale;*/
+	volatile int *sizeImgDst = (int *)&c[2];
+	*sizeImgDst = 720 * scale * 440 * scale;
+	int * offsetDst = (int *)&c[10];
+	*offsetDst = 54;
+	fwrite(c, 1, 14, fp);
+	fwrite(pBmpInfoDst, 1, /*1078*/54-14, fp);
+	fwrite(pDst, 1,720*scale*440*scale*3,fp);
 	fclose(fp);
 }
 

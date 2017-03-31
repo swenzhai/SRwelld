@@ -13,57 +13,15 @@
 #pragma comment(lib,"lib\\opencv_imgproc2413.lib")
 
 //format change from 1-plane to 3-plane
-
-uchar* FillGrayRow8(uchar* data, uchar* indices, int len, uchar* palette)
-{
-	int i;
-	for (i = 0; i < len; i++)
-	{
-		data[i] = palette[indices[i]];
-	}
-	return data + len;
-}
-
-//#define  SCALE  14
-//#define  cR  (int)(0.299*(1 << SCALE) + 0.5)
-//#define  cG  (int)(0.587*(1 << SCALE) + 0.5)
-//#define  cB  ((1 << SCALE) - cR - cG)
-//#define  descale(x,n)  (((x) + (1 << ((n)-1))) >> (n))
-//
-//void icvCvt_BGR2Gray_8u_C3C1R(const uchar* rgb, int rgb_step,
-//	uchar* gray, int gray_step,
-//	CvSize size, int _swap_rb)
-//{
-//	int i;
-//	int swap_rb = _swap_rb ? 2 : 0;
-//	for (; size.height--; gray += gray_step)
-//	{
-//		for (i = 0; i < size.width; i++, rgb += 3)
-//		{
-//			int t = descale(rgb[swap_rb] * cB + rgb[1] * cG + rgb[swap_rb ^ 2] * cR, SCALE);
-//			gray[i] = (uchar)t;
-//		}
-//
-//		rgb += rgb_step - size.width * 3;
-//	}
-//}
 struct PaletteEntry
 {
 	unsigned char b, g, r, a;
 };
-//void CvtPaletteToGray(const PaletteEntry* palette, uchar* grayPalette, int entries)
-//{
-//	int i;
-//	for (i = 0; i < entries; i++)
-//	{
-//		icvCvt_BGR2Gray_8u_C3C1R((uchar*)(palette + i), 0, grayPalette + i, 0, cvSize(1, 1), 0);
-//	}
-//}
 #define WRITE_PIX( ptr, clr )       \
     (((uchar*)(ptr))[0] = (clr).b,  \
      ((uchar*)(ptr))[1] = (clr).g,  \
      ((uchar*)(ptr))[2] = (clr).r)
-uchar* FillColorRow8(uchar* data, uchar* indices, int len, PaletteEntry* palette)
+inline uchar* FillColorRow8(uchar* data, uchar* indices, int len, PaletteEntry* palette)
 {
 	uchar* end = data + len * 3;
 	while ((data += 3) < end)
@@ -86,7 +44,7 @@ static int nWidth, nHeight;
 SRWELLD_API int __stdcall srCreateResizeCoef(BYTE * pSrc, BITMAPINFO * pBmpInfo, BYTE ** pDst, BITMAPINFO ** pBmpInfoDst, double scale)
 {
 	//error detect
-	if (!pSrc || !pBmpInfo || !pDst)
+	if (!pSrc || !pBmpInfo || !pDst || !pBmpInfoDst)
 		return -1;
 	if (scale < 0 || scale >10)
 		return -2;
@@ -96,7 +54,6 @@ SRWELLD_API int __stdcall srCreateResizeCoef(BYTE * pSrc, BITMAPINFO * pBmpInfo,
 		return -4;
 	//image format chang from 1-channel to 3-channel && coefficient prepare
 	color_palette = (PaletteEntry*)&pBmpInfo->bmiColors[0].rgbBlue;
-	//CvtPaletteToGray((const PaletteEntry*)&pBmpInfo->bmiColors[0].rgbBlue, gray_palette, 1 << 8);
 	//new bmpinfo
 	nWidth = pBmpInfo->bmiHeader.biWidth;
 	nHeight = pBmpInfo->bmiHeader.biHeight;
@@ -127,7 +84,6 @@ SRWELLD_API int __stdcall srCreateResizeCoef(BYTE * pSrc, BITMAPINFO * pBmpInfo,
 	dst_cvsize.height = (int)(src->height*scale);
 	dst = cvCreateImage(dst_cvsize, IPL_DEPTH_8U, 3);
 	*pDst = (BYTE*)dst->imageDataOrigin;
-
 	return 0;
 }
 
@@ -146,7 +102,6 @@ SRWELLD_API int __stdcall srResize(int method)
 	for (int y = 0; y < nHeight; y++, resizeSrc_t += step, src_t += src_pitch)
 	{
 		FillColorRow8(resizeSrc_t, src_t, nWidth, color_palette);
-		//FillGrayRow8(resizeSrc_t, src_t, nWidth, gray_palette);
 	}
 	//resize
 	cvResize(src, dst, method);
@@ -168,7 +123,7 @@ SRWELLD_API int __stdcall srReleaseResizeCoef()
 
 SRWELLD_API int __stdcall srAbout()
 {
-	MessageBox(NULL, TEXT("Copy Right: Shenzhen Welld CO,.Ltd\n SR Module.\n Version 1.0"),TEXT("About"), MB_OK);
+	MessageBox(NULL, TEXT("Copy Right: Shenzhen Welld CO,.Ltd\n SR Module.\n Version 2.0"),TEXT("About"), MB_OK);
 	return 0;
 }
 

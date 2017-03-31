@@ -171,7 +171,7 @@ void CSRtestDlg::OnBnClickedButton1()
 BYTE pBuf[720 * 512] = {0xff,0,1,2,0xff};
 BITMAPINFO bmpInfo;
 BYTE* pDst;
-double scale = 1.3;
+double scale = 2.1;
 char c[1078];
 BITMAPINFO *pBmpInfoDst;
 void CSRtestDlg::OnBnClickedButton2()
@@ -199,7 +199,7 @@ void CSRtestDlg::OnBnClickedButton3()
 	srResize(1);
 	tCount.Stop();
 
-	static int i=1000;
+	static int i=10001;
 	char s[256];
 	sprintf(s,"%d.bmp",i++);
 	FILE * fp;

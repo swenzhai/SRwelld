@@ -27,6 +27,15 @@
     <ClInclude Include="SRwelld.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="srRGB.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="srBase.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="srGrey.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

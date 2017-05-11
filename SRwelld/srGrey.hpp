@@ -3,7 +3,7 @@
 
 
 #include"srBase.hpp"
-class srGrey :srBase {
+class srGrey :public srBase {
 public:
 	virtual int srCreateResizeCoef(BYTE * pSrc, BITMAPINFO * pBmpInfo, BYTE ** pDst, BITMAPINFO ** pBmpInfoDst, double scale);
 	virtual int srResize(int method);
@@ -26,8 +26,7 @@ int srGrey::srCreateResizeCoef(BYTE * pSrc, BITMAPINFO * pBmpInfo, BYTE ** pDst,
 		pBmpInfo->bmiHeader.biBitCount, pBmpInfo->bmiHeader.biPlanes);
 
 	//widthStep 4×Ö½Ú¶ÔÆë
-	int widthStep = (4 - (pBmpInfo->bmiHeader.biWidth*pBmpInfo->bmiHeader.biPlanes - 1) % 4)
-		+ pBmpInfo->bmiHeader.biWidth*pBmpInfo->bmiHeader.biPlanes;
+	int widthStep = (pBmpInfo->bmiHeader.biWidth  * 4 + 3) / 4;
 	cvSetData(src, pSrc, widthStep);
 
 	dst_cvsize.width = (int)(src->width*scale);

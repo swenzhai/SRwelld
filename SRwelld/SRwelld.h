@@ -16,6 +16,9 @@ version 2.0: 2017.3.31
 #endif
 
 
+#define SR_IS_RGB 1
+#define SR_IS_GREY 2
+
 /*
 	used to set initial coefficient and memory alloc before srResize function
 	pSrc: 源图像指针
@@ -25,7 +28,8 @@ version 2.0: 2017.3.31
 	scale:	放大倍数 >0 && <10 
 	success :return 0;
 */
-EXTERN_C SRWELLD_API  int __stdcall srCreateResizeCoef(BYTE* pSrc, BITMAPINFO* pBmpInfo,BYTE** pDst, BITMAPINFO ** pBmpInfoDst, double scale);
+EXTERN_C SRWELLD_API  int __stdcall srCreateResizeCoef(BYTE* pSrc, BITMAPINFO* pBmpInfo, BYTE** pDst, BITMAPINFO ** pBmpInfoDst, double scale,
+	int rgb_or_grey, int *hSR);
 
 /*
 *	method :can only be set as 0 or 1 or 2 or 3 or 4
@@ -36,13 +40,13 @@ EXTERN_C SRWELLD_API  int __stdcall srCreateResizeCoef(BYTE* pSrc, BITMAPINFO* p
 		INTER_LANCZOS4 =4 
 	success :return 0;
 */
-EXTERN_C SRWELLD_API  int __stdcall srResize(int method);
+EXTERN_C SRWELLD_API  int __stdcall srResize(int *hSR, int method);
 
 /*
 	when you finish using resize function, MUST use this function to release the buffer
 	success :return 0;
 */
-EXTERN_C SRWELLD_API  int __stdcall srReleaseResizeCoef();
+EXTERN_C SRWELLD_API  int __stdcall srReleaseResizeCoef(int *hSR);
 
 /*
 	output dll information

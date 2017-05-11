@@ -13,7 +13,7 @@ struct PaletteEntry
      ((uchar*)(ptr))[2] = (clr).r)
 
 
-class srRGB: srBase{
+class srRGB: public srBase{
 public:
 	virtual int srCreateResizeCoef(BYTE * pSrc, BITMAPINFO * pBmpInfo, BYTE ** pDst, BITMAPINFO ** pBmpInfoDst, double scale);
 	virtual int srResize(int method);

@@ -167,13 +167,14 @@ void CSRtestDlg::OnBnClickedButton1()
 	srAbout();
 
 }
-
+#define SR_RGB_DEBUG
 BYTE pBuf[720 * 512] = {0xff,0,1,2,0xff};
 BITMAPINFO bmpInfo;
 BYTE* pDst;
 double scale = 2.1;
 char c[1078];
 BITMAPINFO *pBmpInfoDst;
+int hSR = NULL;
 void CSRtestDlg::OnBnClickedButton2()
 {
 	// TODO: 在此添加控件通知处理程序代码
@@ -187,7 +188,12 @@ void CSRtestDlg::OnBnClickedButton2()
 	fread(pBuf, 1, 720 * 440,fp);
 	fclose(fp);
 	BITMAPINFO *pBInfo = (BITMAPINFO*)(&c[14]);
-	srCreateResizeCoef(pBuf, pBInfo/*(BITMAPINFO*)(char*)(&c[14])*/, &pDst, &pBmpInfoDst, scale);
+#ifdef SR_GREY_DEBUG
+	srCreateResizeCoef(pBuf, pBInfo/*(BITMAPINFO*)(char*)(&c[14])*/, &pDst, &pBmpInfoDst, scale,SR_IS_GREY, &hSR);
+#endif
+#ifdef SR_RGB_DEBUG
+	srCreateResizeCoef(pBuf, pBInfo/*(BITMAPINFO*)(char*)(&c[14])*/, &pDst, &pBmpInfoDst, scale, SR_IS_RGB, &hSR);
+#endif
 }
 
 #include "TimerCounter.h"
@@ -196,17 +202,24 @@ void CSRtestDlg::OnBnClickedButton3()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	tCount.Start();
-	srResize(1);
+	srResize(&hSR,1);
 	tCount.Stop();
 
-	static int i=10001;
+	static int i=20002;
 	char s[256];
 	sprintf(s,"%d.bmp",i++);
 	FILE * fp;
 	fp = fopen(s, "wb");
-	/*BITMAPINFO *pBInfo = (BITMAPINFO *)&c[14];
+#ifdef SR_GREY_DEBUG
+	//grey
+	BITMAPINFO *pBInfo = (BITMAPINFO *)&c[14];
 	pBInfo->bmiHeader.biHeight = 440 * scale;
-	pBInfo->bmiHeader.biWidth = 720 * scale;*/
+	pBInfo->bmiHeader.biWidth = 720 * scale;
+	fwrite(c, 1, 1078, fp);
+	fwrite(pDst, 1, 720 * scale * 440 * scale, fp);
+#endif
+#ifdef SR_RGB_DEBUG
+	//RGB
 	volatile int *sizeImgDst = (int *)&c[2];
 	*sizeImgDst = 720 * scale * 440 * scale;
 	int * offsetDst = (int *)&c[10];
@@ -214,6 +227,7 @@ void CSRtestDlg::OnBnClickedButton3()
 	fwrite(c, 1, 14, fp);
 	fwrite(pBmpInfoDst, 1, /*1078*/54-14, fp);
 	fwrite(pDst, 1,720*scale*440*scale*3,fp);
+#endif
 	fclose(fp);
 }
 
@@ -221,6 +235,6 @@ void CSRtestDlg::OnBnClickedButton3()
 void CSRtestDlg::OnBnClickedButton4()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	srReleaseResizeCoef();
+	srReleaseResizeCoef(&hSR);
 }
 
